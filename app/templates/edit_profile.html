@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4" style="margin-left: 7%;">
+    <h2 class="mb-4">プロフィール編集</h2>
+
+    <form method="post">
+        <div class="mb-3">
+            <label for="usernameInput" class="form-label">ユーザー名:</label>
+            <input type="text" class="form-control custom-input-width" id="usernameInput" name="username" value="{{ user.username }}">
+        </div>
+        <div class="mb-3">
+            <label for="emailInput" class="form-label">メールアドレス:</label>
+            <input type="email" class="form-control custom-input-width" id="emailInput" name="email" value="{{ user.email if user.email else '' }}">
+        </div>
+        <div class="d-flex align-items-center">
+            <button type="submit" class="btn btn-primary mr-3">更新</button>
+            <a href="{{ url_for('profile') }}" class="btn btn-secondary">戻る</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+ 
+

@@ -1,70 +1,428 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- 左側のカラム: カテゴリ関連のコンテンツ -->
+<div class="sidebar">
+    <div class="mb-3">
+        <h3>メニュー</h3>
+        <!-- ここにメニュー項目を追加する -->
+    </div>
+
+    <div class="my-2">
+        <!-- カテゴリ追加ボタン -->
+        <div class="clickable-area" data-bs-toggle="modal" data-bs-target="#categoryModal">
+            カテゴリ管理
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <h1 class="mt-5">ToDoリスト</h1>
 
-    <!-- タスク追加フォーム -->
-    <div class="mt-4 mb-4">
-        <form action="{{ url_for('add') }}" method="post">
-            <div class="row">
-                <div class="col-md-3">
-                    <input type="text" class="form-control" name="title" placeholder="タイトル" required>
+    <div class="row">
+        <!-- 右側のカラム: タスク関連のコンテンツ -->
+        <div class="col-md-12">
+            <!-- タスク追加フォーム -->
+            <div class="mt-4 mb-4">
+                <h3 class="mb-3">タスク追加</h3>
+                <form action="{{ url_for('add') }}" method="post">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" name="title" placeholder="タイトル" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" name="due_date">
+                        </div>
+                        <div class="col-md-2">
+                            <select name="priority" class="form-control">
+                                <option value="">優先度</option>
+                                <option value="高">高</option>
+                                <option value="中">中</option>
+                                <option value="低">低</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select name="category" class="form-control">
+                                <option value="">カテゴリ</option>
+                                <!-- カテゴリ選択肢のリストアップ -->
+                                {% for category in categories %}
+                                <option value="{{ category.name }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary">追加</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            
+            <!-- タスク一覧表 -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="text-center">タイトル
+                        <button onclick="toggleSortOptions(event, 'sort-title')" class="sort-btn">▽</button>
+                        <div id="sort-title" class="sort-options" style="display:none;">
+                            <a href="#" onclick="sortTasks('title', 'asc')">昇順</a>
+                            <a href="#" onclick="sortTasks('title', 'desc')">降順</a>
+                        </div>
+                        </th>
+                        <th class="text-center">期限
+                        <button onclick="toggleSortOptions(event, 'sort-due_date')" class="sort-btn">▽</button>
+                        <div id="sort-due_date" class="sort-options" style="display:none;">
+                            <a href="#" onclick="sortTasks('due_date', 'asc')">昇順</a>
+                            <a href="#" onclick="sortTasks('due_date', 'desc')">降順</a>
+                        </div>
+                        </th>
+                        <th class="text-center">優先度
+                        <button onclick="toggleSortOptions(event, 'sort-priority')" class="sort-btn">▽</button>
+                        <div id="sort-priority" class="sort-options" style="display:none;">
+                            <a href="#" onclick="sortTasks('priority', 'asc')">昇順</a>
+                            <a href="#" onclick="sortTasks('priority', 'desc')">降順</a>
+                        </div>
+                        </th>
+                        <th class="text-center">カテゴリ
+                        <button onclick="toggleSortOptions(event, 'sort-category')" class="sort-btn">▽</button>
+                        <div id="sort-category" class="sort-options" style="display:none;">
+                            <a href="#" onclick="sortTasks('category', 'asc')">昇順</a>
+                            <a href="#" onclick="sortTasks('category', 'desc')">降順</a>
+                        </div>
+                        </th>
+                        <th class="text-center">ステータス
+                        <button onclick="toggleSortOptions(event, 'sort-status')" class="sort-btn">▽</button>
+                        <div id="sort-status" class="sort-options" style="display:none;">
+                            <a href="#" onclick="sortTasks('status', 'asc')">昇順</a>
+                            <a href="#" onclick="sortTasks('status', 'desc')">降順</a>
+                        </div>
+                        </th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                </thead>
+                <tbody ondrop="drop(event)" ondragover="over(event)">
+                    {% if tasks %}
+                    {% for task in tasks %}
+                    <tr draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
+                        <td class="d-flex justify-content-between align-items-center">
+                            <span>{{ task.title }}</span>
+                            <a href="#" class="btn btn-info btn-sm ml-3" data-bs-toggle="modal" data-bs-target="#taskDetailModal" data-description="{{ task.description }}">
+                                <i class="fas fa-clipboard-list" style="background-color: transparent; color: #333;"></i> <!-- FontAwesomeのアイコン -->
+                            </a>
+                        </td>
+                        <td>{{ task.due_date.strftime('%Y-%m-%d') if task.due_date else '' }}</td>
+                        <td class="text-center">{{ task.priority }}</td>
+                        <td class="text-center">{{ task.category }}</td>
+                        <td class="text-center">{{ task.status }}</td>
+                        <td class="text-center">
+                            <a href="{{ url_for('edit', task_id=task.id) }}" class="btn btn-warning btn-sm">編集</a>
+                            <a href="javascript:void(0);" class="btn btn-danger btn-sm" onclick="confirmDeletion('{{ url_for('delete', task_id=task.id) }}')">削除</a>
+                            <a href="{{ url_for('toggle_status', task_id=task.id) }}" class="btn btn-secondary btn-sm status-button">{{ '完了' if task.status == '未完了' else '未完了' }}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">タスクがありません。</td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+            <!-- モーダルウィンドウ -->
+            <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="taskDetailModalLabel">タスク詳細</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    <!-- 詳細を表示する場所 -->
+                        <p id="taskDetailDescription" class="modal-description"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <input type="date" class="form-control" name="due_date">
-                </div>
-                <div class="col-md-2">
-                    <select name="priority" class="form-control">
-                        <option value="">優先度</option>
-                        <option value="高">高</option>
-                        <option value="中">中</option>
-                        <option value="低">低</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select name="category" class="form-control">
-                        <option value="">カテゴリ</option>
-                        <option value="仕事">仕事</option>
-                        <option value="私用">私用</option>
-                        <!-- 他のカテゴリも追加可能 -->
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary">追加</button>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
-
-    <!-- タスク一覧表 -->
-    <table class="table">
-        <thead>
-            <tr>
-                <th>タイトル</th>
-                <th>期限</th>
-                <th>優先度</th>
-                <th>カテゴリ</th>
-                <th>ステータス</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for task in tasks %}
-            <tr>
-                <td>{{ task.title }}</td>
-                <td>{{ task.due_date.strftime('%Y-%m-%d') if task.due_date else '' }}</td>
-                <td>{{ task.priority }}</td>
-                <td>{{ task.category }}</td>
-                <td>{{ task.status }}</td>
-                <td>
-                    <a href="{{ url_for('edit', task_id=task.id) }}" class="btn btn-warning btn-sm">編集</a>
-                    <a href="{{ url_for('delete', task_id=task.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('本当に削除しますか？')">削除</a>
-                    <a href="{{ url_for('toggle_status', task_id=task.id) }}" class="btn btn-secondary btn-sm">{{ '完了' if task.status == '未完了' else '未完了' }}</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 </div>
+
+
+
+
+<!-- カテゴリ追加モーダル -->
+<div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalLabel">カテゴリ管理</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCategoryForm" method="POST" class="mb-3">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">カテゴリ名</label>
+                        <input type="text" class="form-control" id="categoryName" name="categoryName" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">追加</button>
+                </form>
+                <ul id="modalCategoryList" class="list-group list-group-flush">
+                    {% for category in categories %}
+                    <li id="modal-category-{{ category.id }}" class="list-group-item">
+                        {{ category.name }}
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteCategory({{ category.id }})">削除</button>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- メッセージ表示用のプレースホルダー -->
+<div id="messagePlaceholder"></div>
+
+  
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // モーダルが表示された時にカテゴリ一覧を更新する
+    $('#categoryModal').on('show.bs.modal', function() {
+        updateCategoryList();
+    });
+
+    // カテゴリ追加フォームの送信処理
+    $('#addCategoryForm').on('submit', function(e) {
+        e.preventDefault();
+        const categoryName = $('#categoryName').val();
+        $.ajax({
+            url: '/category/add',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ category_name: categoryName }), // キーを `category_name` に修正
+            success: function(response) {
+                $('#addCategoryForm').trigger('reset');
+                updateCategoryList(); // カテゴリ一覧を更新
+                // ここでドロップダウンリストを更新
+                $('select[name="category"]').append(new Option(response.category_name, response.category_id));
+                displayMessage('カテゴリが追加されました', 'success');
+            },
+            error: function(xhr) {
+                displayMessage('カテゴリの追加に失敗しました: ' + xhr.responseJSON.message, 'danger');
+            }
+        });
+    });
+});
+
+
+// カテゴリ一覧を更新する関数
+function updateCategoryList() {
+    $.ajax({
+        url: '/category/list',
+        method: 'GET',
+        success: function(response) {
+            const categoryList = $('#modalCategoryList');
+            categoryList.empty(); // 一覧をクリア
+            $('select[name="category"]').empty(); // ドロップダウンもクリア
+            response.categories.forEach(function(category) {
+                categoryList.append(
+                    `<li id="category-${category.id}">
+                        ${category.name}
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteCategory(${category.id})">削除</button>
+                    </li>`
+                );
+                // ドロップダウンリストにも追加
+                $('select[name="category"]').append(new Option(category.name, category.id));
+            });
+        },
+        error: function(xhr) {
+            alert('カテゴリ一覧の取得に失敗しました: ' + xhr.responseJSON.message);
+        }
+    });
+}
+
+// カテゴリ削除の関数
+function deleteCategory(categoryId) {
+    if (!confirm('このカテゴリを削除してもよろしいですか？')) {
+        return;
+    }
+    $.ajax({
+        url: `/category/delete/${categoryId}`,
+        method: 'DELETE',
+        success: function() {
+            $(`#category-${categoryId}`).remove();
+            displayMessage('カテゴリが削除されました', 'success');
+        },
+        error: function() {
+            displayMessage('カテゴリの削除に失敗しました', 'danger');
+        }
+    });
+}
+
+function displayMessage(message, category) {
+    const alertHTML = `
+        <div class="alert alert-${category} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    `;
+    $('#messagePlaceholder').html(alertHTML);
+    setTimeout(() => $('.alert').alert('close'), 3000); // 3秒後にメッセージを閉じる
+}
+
+        // ドラッグandドロップ   
+        var dragged;
+var placeholder = document.createElement('tr');
+placeholder.className = 'placeholder';
+
+// ドラッグ開始時の処理
+function drag(event) {
+    dragged = event.target;
+    dragged.classList.add('dragging');
+    // プレースホルダーの挿入
+    placeholder.style.height = dragged.offsetHeight + 'px';
+    dragged.parentNode.insertBefore(placeholder, dragged.nextSibling);
+}
+
+// ドラッグオーバー時の処理
+function over(event) {
+    event.preventDefault();
+    var target = event.target;
+    while (target && target.tagName !== "TR") {
+        target = target.parentNode;
+    }
+    if (target && target !== dragged) {
+        var targetRect = target.getBoundingClientRect();
+        var isBefore = (event.clientY < targetRect.top + targetRect.height / 2);
+        if (isBefore) {
+            target.parentNode.insertBefore(placeholder, target);
+        } else {
+            if (target.nextSibling) {
+                target.parentNode.insertBefore(placeholder, target.nextSibling);
+            } else {
+                // 既に最後の要素の場合は、最後に挿入
+                target.parentNode.appendChild(placeholder);
+            }
+        }
+    }
+}
+
+
+function updateTaskOrder() {
+    var taskIds = Array.from(document.querySelectorAll('tbody tr')).map(row => row.id.replace('task-', ''));
+    fetch('/update_order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ order: taskIds })
+    }).then(response => response.json())
+      .then(data => {
+          console.log('Order updated:', data);
+      });
+}
+
+// ドロップイベントでこの関数を呼び出す
+function drop(event) {
+    event.preventDefault();
+    if (placeholder.parentNode) {
+        placeholder.parentNode.insertBefore(dragged, placeholder);
+    }
+    dragged.classList.remove('dragging');
+    placeholder.remove();
+    updateTaskOrder(); // 順序を更新
+}
+
+// ドラッグ終了時の処理（ドロップ外の場合も含む）
+function endDrag(event) {
+    if (dragged) {
+        dragged.classList.remove('dragging');
+        placeholder.remove();
+    }
+}
+
+
+    // タスク一覧の各行にイベントリスナーを追加
+    var rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        row.addEventListener('dragover', over);
+        row.addEventListener('drop', drop);
+        row.addEventListener('dragend', endDrag); // ドラッグ終了時のイベントリスナーを追加
+    });
+
+
+            // 昇順降順ソート
+
+function sortTasks(column, order) {
+    // サーバーにソート条件を送信する
+    window.location.href = `/?sort=${column}&order=${order}`;
+}
+
+function toggleSortOptions(event, id) {
+    // 他のすべてのソートオプションを隠す
+    document.querySelectorAll('.sort-options').forEach(div => {
+        div.style.display = 'none';
+    });
+
+    var sortOptions = document.getElementById(id);
+    // ここでエラーが発生しているので、sortOptionsがnullではないことを確認する
+    if (sortOptions) {
+        var isVisible = sortOptions.style.display === 'block';
+
+        // ソートオプションの表示を切り替える
+        sortOptions.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible) {
+            // クリックされたボタンの位置を取得して、小窓の位置を調整する
+            var rect = event.target.getBoundingClientRect();
+            sortOptions.style.position = 'absolute';
+            sortOptions.style.left = `${rect.left}px`;
+            sortOptions.style.top = `${rect.bottom + window.scrollY}px`;
+        }
+    } else {
+        console.error('Sort options element not found:', id);
+    }
+}
+
+
+// ページのどこかがクリックされたら、ソートオプションを閉じる
+window.addEventListener('click', function(event) {
+    if (!event.target.matches('button')) {
+        document.querySelectorAll('.sort-options').forEach(function(div) {
+            div.style.display = 'none';
+        });
+    }
+}, true);
+
+</script>
+
+<style>
+    tr.dragging {
+        background-color: #f4f4f4; /* 背景色を変更 */
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2); /* 影を追加 */
+        border: 2px solid #ddd; /* 枠線を追加 */
+        cursor: grabbing;
+    }
+    
+    tr {
+    cursor: grab;
+}
+
+tr.dragging {
+    cursor: grabbing;
+}
+
+.placeholder {
+    height: 50px; /* プレースホルダーの高さ */
+    background-color: #f0f0f0; /* プレースホルダーの背景色 */
+}
+
+</style>
+
 {% endblock %}
+
+ 
+

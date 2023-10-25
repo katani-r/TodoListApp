@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-4">新規登録</h2>
+            <form action="/register" method="post" class="mb-4">
+                <div class="mb-3">
+                    <label for="username" class="form-label">ユーザー名:</label> <span class="required">必須</span>
+                    <input type="text" id="username" name="username" class="form-control" required minlength="3" maxlength="20">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">メールアドレス:</label> <span class="optional">任意</span>
+                    <input type="email" id="email" name="email" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">パスワード:</label> <span class="required">必須</span>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password_confirm" class="form-label">パスワード再確認:</label> <span class="required">必須</span>
+                    <input type="password" id="password_confirm" name="password_confirm" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">登録</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .required {
+        color: red;
+    }
+    
+    .optional {
+        color: gray;
+    }
+</style>
+{% endblock %}
+
+ 

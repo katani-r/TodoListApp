@@ -1,0 +1,361 @@
+body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background-color: #f4f4f4;
+    padding-top: 50px; /* ナビゲーションバーの高さに応じて調整 */
+}
+
+.navbar {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: fixed; /* ナビゲーションバーを固定 */
+    top: 0; /* ナビゲーションバーをビューポートの上端に配置 */
+    left: 0; /* ナビゲーションバーをビューポートの左端に配置 */
+    width: 100%; /* ナビゲーションバーの幅をビューポート全体に拡張 */
+    z-index: 1000;  /* ナビゲーションバーのz-indexをより高く設定 */
+}
+
+
+
+/* ナビゲーションバーのタイトルを左寄せに */
+.navbar-brand {
+    margin-right: auto; /* これにより、タイトルの右側に自動的にスペースができます */
+}
+
+/* ナビゲーションバーの項目を右寄せに */
+.navbar-nav {
+    margin-left: auto; /* これにより、ナビゲーション項目が右側に移動します */
+}
+
+
+.nav-item img {
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+}
+
+.nav-item img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); /* より控えめな影を追加 */
+    overflow: hidden;  /* はみ出しを制御 */
+}
+
+/* 操作ボタン用の列に固定幅を設定 */
+th:last-child, td:last-child {
+    width: 220px;  /* 必要に応じて調整 */
+    white-space: nowrap;
+}
+
+/* タイトル列の折り返しの設定 */
+th:first-child, td:first-child {
+    word-break: break-word;
+}
+
+th:nth-child(2), td:nth-child(2), 
+th:nth-child(3), td:nth-child(3), 
+th:nth-child(4), td:nth-child(4), 
+th:nth-child(5), td:nth-child(5) {
+    width: 100px;  /* 必要に応じて調整 */
+    white-space: nowrap;
+}
+
+h3.mb-3 {
+    font-size: 20px;  /* または好みのサイズに変更 */
+}
+
+
+.alert {
+    margin-top: 20px;
+    z-index: 1000;
+    position: fixed;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px;
+    border: 1px solid rgba(0,0,0,0.125);
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    animation: slideInFadeIn 0.3s forwards, slideOutFadeOut 0.5s 4s forwards;
+}
+
+.btn {
+    border: none;
+    font-weight: 500; /* テキストの太さを少し軽く */
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn:hover {
+    background-color: #0056b3; /* ホバー時の背景色を濃く */
+    opacity: 0.9;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+.btn-sm + .btn-sm {
+    margin-left: 5px;
+}
+
+.btn-primary {
+    margin-right: 10px;
+}
+
+
+.status-button {
+    min-width: 60px;  /* 3文字が見えやすいように調整。必要に応じてこの値を変更してください。 */
+    text-align: center;  /* テキストを中央に配置 */
+}
+
+img {
+    max-width: 150px;
+    border-radius: 50%;
+}
+
+@keyframes slide {
+    0% {
+        top: -60px;
+        opacity: 0.5;
+    }
+    100% {
+        top: 60px;
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        top: -60px;
+        opacity: 0;
+    }
+    100% {
+        top: 100px;
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFadeIn {
+    0% {
+        top: -60px;
+        opacity: 0;
+    }
+    100% {
+        top: 100px; /* ナビゲーションバーから適切な距離にメッセージを配置 */
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        top: 100px;
+        opacity: 1;
+    }
+    to {
+        top: -60px;
+        opacity: 0;
+    }
+}
+
+@keyframes slideOutFadeOut {
+    from {
+        top: 100px;
+        opacity: 1;
+    }
+    to {
+        top: -60px;
+        opacity: 0;
+    }
+}
+
+.profile-label {
+    display: inline-block;
+    width: 180px; /* この幅は適宜調整してください */
+    text-align: right; /* テキストを右揃えに */
+}
+
+.profile-value {
+    display: inline-block;
+}
+
+.colon {
+    display: inline-block;
+    width: 20px; /* この幅は適宜調整してください */
+    text-align: center; /* コロンを中央揃えに */
+}
+
+.custom-input-width {
+    max-width: 400px;  /* この値を変更して、希望する横幅に調整できます */
+}
+
+/* タイトル列の幅を確保 */
+.table .d-flex {
+    min-width: 200px;  /* この値は必要に応じて調整してください */
+}
+
+.btn-info {
+    background-color: transparent !important;
+}
+
+.modal-description {
+    padding: 15px;
+    background-color: #f8f9fa; /* 薄い灰色の背景 */
+    border-left: 3px solid #007bff; /* 青色の左ボーダー */
+    margin-bottom: 15px;
+    overflow-wrap: break-word; /* 長い単語があっても折り返す */
+  }
+  
+/* モーダルウィンドウのカスタムスタイリング */
+.modal-header {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.modal-title {
+    color: #5a5a5a;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+#addCategoryForm .btn-primary {
+    margin-top: 10px; /* フォームとボタンの間にマージンを追加 */
+}
+
+#modalCategoryList .btn-danger {
+    padding: 0.25rem 0.5rem; /* 削除ボタンのパディングを調整 */
+}
+
+#modalCategoryList .list-group-item {
+    background-color: #fdfdfd; /* 各リスト項目の背景色を軽く設定 */
+    border: 1px solid #eaeaea; /* リスト項目の境界線を設定 */
+}
+
+#modalCategoryList {
+    padding-left: 0; /* デフォルトのパディングを削除 */
+    list-style: none; /* リストアイテムのスタイルをなしに */
+    width: 100%; /* リストの幅をモーダルに合わせて100%に */
+}
+
+#modalCategoryList li {
+    display: flex; /* フレックスボックスを適用 */
+    justify-content: space-between; /* 左にカテゴリ名、右に削除ボタンが来るように */
+    align-items: center; /* アイテムを中央揃えに */
+    padding: 0.5rem 1.25rem; /* アイテムにパディングを適用 */
+    margin-bottom: 0.25rem; /* アイテム間のマージンを適用 */
+    background-color: #fff; /* 背景色を白に */
+    border-radius: 0.25rem; /* ボーダーの角を丸める */
+}
+
+#modalCategoryList li:not(:last-child) {
+    border-bottom: 1px solid #e9ecef; /* アイテムの下にボーダーを追加 */
+}
+
+#modalCategoryList .btn-danger {
+    padding: 0.375rem 0.75rem; /* 削除ボタンのパディングを調整 */
+}
+
+/* サイドバーのスタイリング */
+.sidebar {
+    position: fixed;
+    top: 55px; /* ここをナビゲーションバーの実際の高さに合わせてください */
+    left: 0;
+    width: 250px;
+    height: calc(100% - 70px); /* ここもナビゲーションバーの高さに合わせて調整してください */
+    padding: 20px;
+    background-color: #333; /* サイドバーの背景色を暗色に設定 */
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.05);
+    z-index: 500;
+}
+
+
+/* サイドバー内のタイトルのスタイリング */
+.sidebar h3 {
+    font-size: 1.25rem; /* フォントサイズを調整 */
+    margin-bottom: 1.5rem; /* 下のマージンを追加 */
+    color: #fff; /* タイトルの色を明るい色に変更 */
+    border-bottom: 1px solid #444; /* ボーダーの色も暗いサイドバーに合わせて調整 */
+    padding-bottom: 0.5rem; /* タイトルの下にパディングを追加 */
+}
+
+
+
+
+
+/* レスポンシブデザインの考慮 */
+@media (max-width: 991px) {
+    .sidebar {
+        position: static;
+        width: auto;
+        height: auto;
+        box-shadow: none;
+        top: 0; /* レスポンシブデザインの際にはtopを0に設定 */
+    }
+}
+
+
+
+/* サイドバー内のクリック可能領域のスタイリング */
+.sidebar .clickable-area {
+    display: block; /* ブロック要素に設定して、横幅いっぱいをクリック可能にする */
+    padding: 10px 15px; /* 適切なパディングを設定 */
+    color: #fff; /* 文字色を白に設定 */
+    background-color: #333; /* 背景色をサイドバーと同じ色に設定 */
+    border-bottom: 1px solid #444; /* セパレータとしてボーダーを追加 */
+    transition: background-color 0.3s; /* 背景色の変化にアニメーションを設定 */
+}
+
+.sidebar .clickable-area:hover {
+    background-color: #555; /* ホバー時に背景色を少し明るくする */
+}
+
+
+/* ソート機能とドラッグアンドドロップ */
+
+/* プルダウンボタンのスタイル */
+.sort-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1em; /* アイコンのサイズを調整 */
+    color: #333; /* ボタンの色 */
+}
+
+/* プルダウンメニューのスタイル */
+.sort-options {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    position: absolute; /* メニューを配置するために絶対位置を指定 */
+    min-width: 120px; /* メニューの最小幅 */
+    z-index: 1000; /* 他の要素の上に表示 */
+    padding: 5px 0; /* 上下のパディング */
+    margin-top: 2px; /* ボタンとの間隔 */
+    border-radius: 4px; /* 角の丸み */
+}
+
+/* プルダウンメニュー内のリンクのスタイル */
+.sort-options a {
+    color: #333;
+    padding: 5px 10px; /* パディングを追加 */
+    display: block; /* ブロック要素として表示 */
+    text-decoration: none; /* 下線を消去 */
+}
+
+/* プルダウンメニュー内のリンクのホバースタイル */
+.sort-options a:hover {
+    background-color: #f2f2f2; /* ホバー時の背景色 */
+}
+
+ 
+
+
+
+
+  

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4" style="margin-left: 7%;">
+    <h2 class="mb-4">プロフィール</h2>
+
+    <div class="row mb-4">
+        <!-- プロフィール画像のセクション -->
+        <div class="col-md-4">
+            <img src="{{ image_file }}" alt="Profile Image" class="img-thumbnail mb-4" style="width: 300px; height: 300px;">
+            <form action="{{ url_for('profile') }}" method="post" enctype="multipart/form-data" class="mb-2 d-flex align-items-center">
+                <label class="btn btn-outline-secondary mr-4">
+                    <input type="file" name="photo" id="fileInput" style="display: none;" onchange="displayFileName()">
+                    ファイル選択
+                </label>
+                <input type="submit" class="btn btn-primary ml-3" value="{% if current_user.profile_image == 'default_image.png' or not current_user.profile_image %}アップロード{% else %}変更{% endif %}">
+            </form>                    
+            <span id="selectedFileName" class="d-block mt-2 mb-2" style="font-size: 0.8em;"></span>
+            {% if current_user.profile_image != "default_image.png" and current_user.profile_image %}
+            <a href="{{ url_for('delete_image') }}" class="btn btn-danger mb-2">
+                <i class="fa fa-trash"></i> 削除
+            </a>
+            {% endif %}
+
+            <h5 class="mt-3 mb-2">アカウント設定</h5>
+            <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                <i class="fa fa-key"></i> パスワード変更
+            </button>
+            <form id="deleteAccountForm" action="{{ url_for('delete_account') }}" method="post">
+                <input type="button" id="deleteAccountButton" class="btn btn-danger" value="アカウント削除">
+            </form>
+        </div>
+
+        <!-- ユーザー情報のセクション -->
+        <div class="col-md-7 d-flex flex-column justify-content-between" style="margin-left: -100px;">
+            <div>
+                <p style="font-size: 1.2em;">
+                    <span class="profile-label"><strong>ユーザー名</strong></span>
+                    <span class="colon">:</span>
+                    <span class="profile-value">{{ user.username }}</span>
+                </p>
+                <p style="font-size: 1.2em; margin-bottom: 0;">
+                    <span class="profile-label"><strong>メールアドレス</strong></span>
+                    <span class="colon">:</span>
+                    <span class="profile-value">{{ email }}</span>
+                </p>
+            </div>
+            <div class="d-flex justify-content-end" style="position: relative; top: -370px;">
+                <a href="{{ url_for('edit_profile') }}" class="btn btn-warning mb-2" style="transform: translateX(-150px);">
+                    <i class="fa fa-edit"></i> プロフィール編集
+                </a>
+            </div>                         
+        </div>
+    </div>
+
+
+    <!-- パスワード変更のモーダル -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">パスワード変更</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('change_password') }}" method="post">
+                        <label for="current_password">現在のパスワード:</label>
+                        <input type="password" id="current_password" name="current_password" required>
+                        <br>
+                        <label for="new_password">新しいパスワード:</label>
+                        <input type="password" id="new_password" name="new_password" required>
+                        <br>
+                        <label for="confirm_password">新しいパスワードの確認:</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
+                        <br>
+                        <input type="submit" class="btn btn-success" value="更新">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">閉じる</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function displayFileName() {
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('selectedFileName');
+
+        if (fileInput.files.length > 0) {
+            fileNameDisplay.textContent = fileInput.files[0].name;
+        } else {
+            fileNameDisplay.textContent = '';
+        }
+    }
+</script>
+
+<script src="js/scripts.js"></script>
+
+
+{% endblock %}
+
+ 
+
+
