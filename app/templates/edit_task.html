@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">タスク編集</h1>
+
+    <form action="{{ url_for('edit', task_id=task.id) }}" method="post" class="mt-4">
+        <div class="mb-3">
+            <label for="title" class="form-label">タイトル</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ task.title }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">詳細説明</label>
+            <textarea class="form-control" id="description" name="description" rows="4">{{ task.description }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="due_date" class="form-label">期限</label>
+            <input type="date" class="form-control" id="due_date" name="due_date" value="{{ task.due_date.strftime('%Y-%m-%d') if task.due_date else '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="priority" class="form-label">優先度</label>
+            <select name="priority" id="priority" class="form-control">
+                <option value="" {% if not task.priority %}selected{% endif %}>選択してください</option>
+                <option value="高" {% if task.priority == '高' %}selected{% endif %}>高</option>
+                <option value="中" {% if task.priority == '中' %}selected{% endif %}>中</option>
+                <option value="低" {% if task.priority == '低' %}selected{% endif %}>低</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="category" class="form-label">カテゴリ</label>
+            <select name="category" id="category" class="form-control">
+                <option value="" {% if not task.category %}selected{% endif %}>選択してください</option>
+                <option value="仕事" {% if task.category == '仕事' %}selected{% endif %}>仕事</option>
+                <option value="私用" {% if task.category == '私用' %}selected{% endif %}>私用</option>
+                <!-- 他のカテゴリも追加可能 -->
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">更新</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">キャンセル</a>
+    </form>
+</div>
+{% endblock %}

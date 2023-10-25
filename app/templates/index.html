@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">ToDoリスト</h1>
+
+    <!-- タスク追加フォーム -->
+    <div class="mt-4 mb-4">
+        <form action="{{ url_for('add') }}" method="post">
+            <div class="row">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="title" placeholder="タイトル" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" name="due_date">
+                </div>
+                <div class="col-md-2">
+                    <select name="priority" class="form-control">
+                        <option value="">優先度</option>
+                        <option value="高">高</option>
+                        <option value="中">中</option>
+                        <option value="低">低</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="category" class="form-control">
+                        <option value="">カテゴリ</option>
+                        <option value="仕事">仕事</option>
+                        <option value="私用">私用</option>
+                        <!-- 他のカテゴリも追加可能 -->
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary">追加</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- タスク一覧表 -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>タイトル</th>
+                <th>期限</th>
+                <th>優先度</th>
+                <th>カテゴリ</th>
+                <th>ステータス</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td>{{ task.title }}</td>
+                <td>{{ task.due_date.strftime('%Y-%m-%d') if task.due_date else '' }}</td>
+                <td>{{ task.priority }}</td>
+                <td>{{ task.category }}</td>
+                <td>{{ task.status }}</td>
+                <td>
+                    <a href="{{ url_for('edit', task_id=task.id) }}" class="btn btn-warning btn-sm">編集</a>
+                    <a href="{{ url_for('delete', task_id=task.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('本当に削除しますか？')">削除</a>
+                    <a href="{{ url_for('toggle_status', task_id=task.id) }}" class="btn btn-secondary btn-sm">{{ '完了' if task.status == '未完了' else '未完了' }}</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

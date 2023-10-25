@@ -1,0 +1,11 @@
+# Virtual Environment
+venv/
+
+# SQLite database
+*.db
+*.db-journal
+
+# Other
+__pycache__/
+*.log
+*.bak

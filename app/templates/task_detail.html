@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">タスク詳細</h1>
+
+    <div class="mt-4">
+        <h2>{{ task.title }}</h2>
+        <p>作成日: {{ task.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+        <p>期限: {{ task.due_date.strftime('%Y-%m-%d') if task.due_date else '未設定' }}</p>
+        <p>優先度: {{ task.priority }}</p>
+        <p>カテゴリ: {{ task.category }}</p>
+        <p>ステータス: {{ task.status }}</p>
+        <p>詳細説明:</p>
+        <p>{{ task.description }}</p>
+    </div>
+
+    <div class="mt-4">
+        <a href="{{ url_for('edit', task_id=task.id) }}" class="btn btn-warning">編集</a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">戻る</a>
+    </div>
+</div>
+{% endblock %}
